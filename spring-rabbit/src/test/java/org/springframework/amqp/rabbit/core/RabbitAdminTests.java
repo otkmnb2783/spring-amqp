@@ -21,6 +21,7 @@ import java.util.Properties;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.SingleConnectionFactory;
@@ -103,6 +104,21 @@ public class RabbitAdminTests {
 		finally {
 			rabbitAdmin.deleteQueue(queueName);
 			connectionFactory.destroy();
+		}
+	}
+
+	@Test
+	public void testExistsExchange() throws Exception {
+		SingleConnectionFactory cf = new SingleConnectionFactory();
+		RabbitAdmin admin = new RabbitAdmin(cf);
+		String exchangeName = "test.exchange." + System.currentTimeMillis();
+		try {
+			admin.declareExchange(new DirectExchange(exchangeName));
+			assertEquals(true, admin.existsExchange(exchangeName));
+			assertEquals(false, admin.existsExchange("not.exists.exchange"));
+		} finally {
+			admin.deleteExchange(exchangeName);
+			cf.destroy();
 		}
 	}
 

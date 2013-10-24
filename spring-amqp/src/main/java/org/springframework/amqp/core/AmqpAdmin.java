@@ -22,6 +22,7 @@ import java.util.Properties;
  * @author Mark Pollack
  * @author Dave Syer
  * @author Gary Russell
+ * @author Manabu Ohtake
  */
 public interface AmqpAdmin {
 
@@ -38,6 +39,13 @@ public interface AmqpAdmin {
 	 * @return true if the exchange existed and was deleted
 	 */
 	boolean deleteExchange(String exchangeName);
+
+	/**
+	 * Exists an exchange.
+	 * @param exchangeName the name of the exchange
+	 * @return true if the exchange existed.
+	 */
+	boolean existsExchange(String exchangeName);
 
 	// Queue Operations
 

@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Declarable;
@@ -122,6 +121,22 @@ public class RabbitAdmin implements AmqpAdmin, ApplicationContextAware, Initiali
 					return false;
 				}
 				return true;
+			}
+		});
+	}
+
+	public boolean existsExchange(final String exchangeName) {
+		return this.rabbitTemplate.execute(new ChannelCallback<Boolean>() {
+			public Boolean doInRabbit(Channel channel) throws Exception {
+				try {
+					com.rabbitmq.client.AMQP.Exchange.DeclareOk declareOk = channel.exchangeDeclarePassive(exchangeName);
+					return declareOk != null ? true : false;
+				} catch (Exception e) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Exchange '" + exchangeName + "' does not exist");
+					}
+					return false;
+				}
 			}
 		});
 	}
